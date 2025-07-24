@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSIAP Mobile - Login</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.webmanifest">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Animate.css for Page Transitions -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Libraries (Loaded before app.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="login-screen">
+        <div class="card" id="login-card">
+            <div class="login-header">
+                <i class="fas fa-school logo"></i>
+                <h2>Login EduSIAP</h2>
+                <p>Silakan masuk untuk melanjutkan</p>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" required>
+                </div>
+                <p id="login-error" class="login-error-message"></p>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i> Masuk
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App Container (Initially Hidden) -->
+    <div id="app-container" style="display: none;">
+        <!-- App Header (Visible on Mobile) -->
+        <header class="app-header">
+            <div class="header-left">
+                <i class="fas fa-school logo"></i>
+                <h1 id="header-title">EduSIAP Mobile</h1>
+            </div>
+            <!-- Theme toggle will be moved here by JS on mobile -->
+        </header>
+
+        <!-- Bottom/Side Navigation -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active" data-page="home" data-roles="all"> <i class="fas fa-home"></i> <span>Home</span> </a>
+            <a href="#" class="nav-item" data-page="dashboard" data-roles="Admin,Kepala Yayasan,Kepala Sekolah"> <i class="fas fa-chart-line"></i> <span>Dashboard</span> </a>
+            <a href="#" class="nav-item" data-page="kesiswaan" data-roles="Admin,Kepala Sekolah,Guru"> <i class="fas fa-users"></i> <span>Kesiswaan</span> </a>
+            <a href="#" class="nav-item" data-page="ptk" data-roles="Admin,Kepala Sekolah"> <i class="fas fa-chalkboard-teacher"></i> <span>Data PTK</span> </a>
+            <a href="#" class="nav-item" data-page="rapor" data-roles="Admin,Kepala Sekolah,Guru"> <i class="fas fa-id-card"></i> <span>Data Rapor</span> </a>
+            <a href="#" class="nav-item" data-page="jadwal" data-roles="Admin,Kepala Sekolah,Guru"> <i class="fas fa-calendar-alt"></i> <span>Jadwal</span> </a>
+            <a href="#" class="nav-item" data-page="keuangan" data-roles="Admin,Kepala Yayasan,Kepala Sekolah"> <i class="fas fa-wallet"></i> <span>Keuangan</span> </a>
+            <a href="#" class="nav-item" data-page="sarpras" data-roles="Admin,Kepala Sekolah"> <i class="fas fa-boxes-stacked"></i> <span>Sarpras</span> </a>
+            <a href="#" class="nav-item" data-page="surat" data-roles="Admin,Kepala Sekolah"> <i class="fas fa-envelope"></i> <span>Persuratan</span> </a>
+            <a href="#" class="nav-item" data-page="laporan" data-roles="Admin,Kepala Yayasan,Kepala Sekolah"> <i class="fas fa-chart-pie"></i> <span>Laporan</span> </a>
+            <a href="#" class="nav-item" data-page="pengaturan" data-roles="Admin"> <i class="fas fa-cog"></i> <span>Pengaturan</span> </a>
+            <a href="#" class="nav-item" data-page="akun" data-roles="all"> <i class="fas fa-user-circle"></i> <span>Akun</span> </a>
+            <div id="desktop-theme-toggle-container">
+                 <!-- Theme toggle will be moved here by JS on desktop -->
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Page: Home -->
+            <section id="page-home" class="page active">
+                <div class="home-header animate__animated animate__fadeInDown">
+                    <h2 id="home-welcome-title">Selamat Datang!</h2>
+                    <p>Sistem Administrasi Pendidikan Modern & Offline</p>
+                    <p id="user-role-display" style="margin-top: 1rem; font-weight: 600;"></p>
+                </div>
+                <div class="home-grid">
+                    <!-- Menu cards will be dynamically shown/hidden by JS based on role -->
+                </div>
+            </section>
+
+            <!-- Page: Dashboard -->
+            <section id="page-dashboard" class="page">
+                <!-- Konten Dashboard yang ada -->
+                <div class="dashboard-grid">
+                    <div class="summary-card" data-type="siswa"> <div class="icon-wrapper"><i class="fas fa-user-graduate"></i></div> <div class="text-wrapper"><div id="siswa-count" class="count">0</div> <div class="title">Siswa Aktif</div></div> </div>
+                    <div class="summary-card" data-type="ptk"> <div class="icon-wrapper"><i class="fas fa-chalkboard-teacher"></i></div> <div class="text-wrapper"><div id="ptk-count" class="count">0</div> <div class="title">Total PTK</div></div> </div>
+                    <div class="summary-card" data-type="alumni"> <div class="icon-wrapper"><i class="fas fa-user-tag"></i></div> <div class="text-wrapper"><div id="alumni-count" class="count">0</div> <div class="title">Total Alumni</div></div> </div>
+                    <div class="summary-card" data-type="pengeluaran"> <div class="icon-wrapper"><i class="fas fa-money-bill-wave"></i></div> <div class="text-wrapper"><div id="pengeluaran-count" class="count">0</div> <div class="title">Total Pengeluaran</div></div> </div>
+                </div>
+                <div class="card"> <h2 class="card-title"><i class="fas fa-chart-bar"></i> Visualisasi Data Utama</h2> <canvas id="dataChart"></canvas> </div>
+            </section>
+
+            <!-- Page: Laporan & Analitik -->
+            <section id="page-laporan" class="page">
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-balance-scale"></i> Ringkasan Keuangan Umum</h2>
+                    <div class="dashboard-grid">
+                        <div class="summary-card"> <div class="icon-wrapper" style="background-color: #E8F5E9; color: #388E3C;"><i class="fas fa-arrow-down"></i></div> <div class="text-wrapper"><div id="total-pemasukan" class="count">Rp 0</div> <div class="title">Total Pemasukan</div></div> </div>
+                        <div class="summary-card"> <div class="icon-wrapper" style="background-color: #FFEBEE; color: #D32F2F;"><i class="fas fa-arrow-up"></i></div> <div class="text-wrapper"><div id="total-pengeluaran-report" class="count">Rp 0</div> <div class="title">Total Pengeluaran</div></div> </div>
+                        <div class="summary-card"> <div class="icon-wrapper" style="background-color: #E3F2FD; color: #1976D2;"><i class="fas fa-landmark"></i></div> <div class="text-wrapper"><div id="laba-rugi" class="count">Rp 0</div> <div class="title">Saldo Akhir</div></div> </div>
+                    </div>
+                </div>
+                <!-- Grafik Terpisah -->
+                <div class="card"> <h2 class="card-title"><i class="fas fa-users"></i> Laporan Siswa</h2> <canvas id="genderChart" style="max-width: 400px; margin: auto;"></canvas> <canvas id="kelasChart" style="margin-top: 2rem;"></canvas></div>
+                <div class="card"> <h2 class="card-title"><i class="fas fa-money-bill-trend-up"></i> Laporan SPP</h2> <canvas id="sppChart"></canvas> </div>
+                <div class="card"> <h2 class="card-title"><i class="fas fa-hand-holding-heart"></i> Laporan Infaq</h2> <canvas id="infaqChart"></canvas> </div>
+                <div class="card"> <h2 class="card-title"><i class="fas fa-chart-line"></i> Laporan Pengeluaran</h2> <canvas id="pengeluaranChart"></canvas> </div>
+                <div class="card"> <h2 class="card-title"><i class="fas fa-dolly"></i> Laporan Inventaris</h2> <canvas id="inventarisChart"></canvas> </div>
+            </section>
+
+            <!-- Page: Pengaturan -->
+            <section id="page-pengaturan" class="page">
+                <nav class="tab-nav">
+                    <a class="tab-link active" data-tab="profil-sekolah">Profil Sekolah</a>
+                    <a class="tab-link" data-tab="manajemen-pengguna">Manajemen Pengguna</a>
+                    <a class="tab-link" data-tab="manajemen-akademik">Manajemen Akademik</a>
+                    <a class="tab-link" data-tab="manajemen-data">Manajemen Data</a>
+                </nav>
+
+                <!-- Tab: Profil Sekolah -->
+                <div id="tab-profil-sekolah" class="tab-content active">
+                    <div class="card">
+                        <h2 class="card-title"><i class="fas fa-university"></i> Profil Sekolah</h2>
+                        <form id="form-sekolah">
+                            <div class="form-group"> <label for="nama_sekolah">Nama Sekolah</label> <input type="text" id="nama_sekolah" class="form-control" required> </div>
+                            <div class="form-group"> <label for="npsn">NPSN</label> <input type="text" id="npsn" class="form-control" required> </div>
+                            <div class="form-group"> <label for="alamat_sekolah">Alamat</label> <textarea id="alamat_sekolah" class="form-control" rows="3"></textarea> </div>
+                            <div class="form-group"> <label for="akreditasi">Akreditasi</label> <select id="akreditasi" class="form-control"> <option value="A">A</option> <option value="B">B</option> <option value="C">C</option> <option value="Belum Terakreditasi">Belum Terakreditasi</option> </select> </div>
+                            <button type="submit" class="btn btn-primary btn-block"> <i class="fas fa-save"></i> Simpan Perubahan <div class="loader" id="sekolah-loader"></div> </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Tab: Manajemen Pengguna -->
+                <div id="tab-manajemen-pengguna" class="tab-content">
+                    <div id="user-management-card" class="card">
+                        <h2 class="card-title"><i class="fas fa-users-cog"></i> Manajemen Pengguna</h2>
+                         <div class="action-bar">
+                            <button class="btn btn-primary" id="btn-add-user"><i class="fas fa-user-plus"></i> Tambah Pengguna</button>
+                        </div>
+                        <div class="table-container">
+                            <table class="styled-table">
+                                <thead> <tr> <th>Username</th> <th>Peran</th> <th class="no-export">Aksi</th> </tr> </thead>
+                                <tbody id="user-table-body"></tbody>
+                            </table>
+                        </div>
+                        <div id="no-user-data" class="card" style="text-align: center; display: none; margin-top: 1rem;">Belum ada pengguna lain.</div>
+                    </div>
+                </div>
+
+                <!-- Tab: Manajemen Akademik (BARU) -->
+                <div id="tab-manajemen-akademik" class="tab-content">
+                    <nav class="tab-nav-inner">
+                        <a class="tab-link-inner active" data-subtab="manajemen-mapel">Mata Pelajaran</a>
+                        <a class="tab-link-inner" data-subtab="manajemen-kelas">Kelas & Rombel</a>
+                    </nav>
+                    
+                    <!-- Subtab: Manajemen Mata Pelajaran -->
+                    <div id="subtab-manajemen-mapel" class="subtab-content active">
+                        <div class="card">
+                            <h3 class="card-title"><i class="fas fa-book"></i> Manajemen Mata Pelajaran</h3>
+                            <div class="action-bar">
+                                <button class="btn btn-primary" id="btn-add-mapel"><i class="fas fa-plus"></i> Tambah Mapel</button>
+                            </div>
+                            <div class="table-container">
+                                <table class="styled-table">
+                                    <thead> <tr> <th>Kode Mapel</th> <th>Nama Mata Pelajaran</th> <th class="no-export">Aksi</th> </tr> </thead>
+                                    <tbody id="mapel-table-body"></tbody>
+                                </table>
+                            </div>
+                            <div id="no-mapel-data" class="card" style="text-align: center; display: none; margin-top: 1rem;">Belum ada data mata pelajaran.</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Subtab: Manajemen Kelas & Rombel -->
+                    <div id="subtab-manajemen-kelas" class="subtab-content">
+                        <div class="card">
+                            <h3 class="card-title"><i class="fas fa-school"></i> Manajemen Kelas & Rombel</h3>
+                            <div class="action-bar">
+                                <button class="btn btn-primary" id="btn-add-kelas"><i class="fas fa-plus"></i> Tambah Kelas</button>
+                            </div>
+                            <div class="table-container">
+                                <table class="styled-table">
+                                    <thead> <tr> <th>Nama Kelas</th> <th>Tingkat</th> <th>Wali Kelas</th> <th class="no-export">Aksi</th> </tr> </thead>
+                                    <tbody id="kelas-table-body"></tbody>
+                                </table>
+                            </div>
+                            <div id="no-kelas-data" class="card" style="text-align: center; display: none; margin-top: 1rem;">Belum ada data kelas.</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tab: Manajemen Data -->
+                <div id="tab-manajemen-data" class="tab-content">
+                    <div class="card">
+                        <h2 class="card-title"><i class="fas fa-hdd"></i> Status Penyimpanan</h2>
+                        <div id="storage-info"> <p>Menghitung penggunaan penyimpanan...</p> </div>
+                        <div class="progress-bar-container"> <div id="storage-progress" class="progress-bar"></div> </div>
+                        <small id="storage-details" class="text-secondary"></small>
+                    </div>
+                    <div class="card">
+                        <h2 class="card-title"><i class="fas fa-database"></i> Backup & Restore</h2>
+                        <div class="action-bar">
+                            <button class="btn btn-success" id="btn-backup-data"><i class="fas fa-download"></i> Backup Data</button>
+                            <button class="btn btn-danger" id="btn-restore-data"><i class="fas fa-upload"></i> Restore Data</button>
+                        </div>
+                        <p class="text-secondary" style="font-size: 0.9em;"><b>Backup</b> akan mengunduh semua data. <b>Restore</b> akan menimpa semua data yang ada (termasuk data pengguna).</p>
+                        <input type="file" id="restore-file-input" class="hidden-file-input" accept=".json">
+                    </div>
+                     <div class="card">
+                        <h2 class="card-title"><i class="fas fa-file-import"></i> Impor Data Terpusat</h2>
+                        <div class="action-bar">
+                            <button class="btn btn-info" id="btn-import-all-data"><i class="fas fa-upload"></i> Impor Semua Data</button>
+                        </div>
+                        <p class="text-secondary" style="font-size: 0.9em;">Fitur ini akan menggantikan semua data (siswa, ptk, keuangan, dll) dengan data dari file. Untuk alasan keamanan dan memastikan data terupdate, silakan minta file data terbaru dari Admin.</p>
+                        <input type="file" id="import-all-data-input" class="hidden-file-input" accept=".json">
+                    </div>
+                    <div class="card">
+                        <h2 class="card-title"><i class="fas fa-tools"></i> Perbaikan Aplikasi</h2>
+                         <div class="action-bar">
+                            <button class="btn btn-danger" id="btn-repair-app"><i class="fas fa-tools"></i> Hapus Database & Reset</button>
+                        </div>
+                        <p class="text-secondary" style="font-size: 0.9em;"><b>PERHATIAN:</b> Gunakan hanya jika aplikasi mengalami error parah. Tindakan ini akan menghapus total database dan tidak dapat diurungkan.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Page: Akun -->
+            <section id="page-akun" class="page">
+                <!-- Konten Akun yang ada -->
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-user-shield"></i> Informasi Akun</h2>
+                    <div class="form-group"> <label>Username</label> <p id="akun-username" class="form-control-static"></p> </div>
+                    <div class="form-group"> <label>Peran</label> <p id="akun-role" class="form-control-static"></p> </div>
+                </div>
+                 <div class="card">
+                    <h2 class="card-title"><i class="fas fa-palette"></i> Tampilan</h2>
+                    <div id="akun-theme-toggle-container"> <!-- Theme toggle will be moved here by JS --> </div>
+                </div>
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-sign-out-alt"></i> Sesi Pengguna</h2>
+                    <button class="btn btn-danger btn-block" id="btn-logout-akun"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </section>
+
+            <!-- Page: Kesiswaan (Diperbarui) -->
+            <section id="page-kesiswaan" class="page">
+                <nav class="tab-nav">
+                    <a class="tab-link active" data-tab="siswa-aktif">Siswa Aktif</a>
+                    <a class="tab-link" data-tab="spmb">SPMB</a>
+                    <a class="tab-link" data-tab="daftar-ulang">Daftar Ulang</a>
+                    <a class="tab-link" data-tab="siswa-mutasi">Siswa Mutasi</a>
+                    <a class="tab-link" data-tab="alumni">Alumni</a>
+                </nav>
+                <div id="tab-siswa-aktif" class="tab-content active">
+                    <!-- Konten Siswa Aktif dengan pencarian autocomplete -->
+                    <div class="action-bar search-container"> 
+                        <input type="text" id="search-siswa" class="form-control" placeholder="Ketik nama atau NISN siswa..." autocomplete="off">
+                        <div id="search-suggestions-siswa" class="search-suggestions"></div>
+                    </div>
+                    <div class="action-bar">
+                        <button class="btn btn-primary" id="btn-add-siswa"><i class="fas fa-plus"></i> Tambah</button>
+                        <button class="btn btn-info" id="btn-import-siswa"><i class="fas fa-file-excel"></i> Impor</button>
+                        <button class="btn btn-success" id="btn-export-siswa-excel"><i class="fas fa-file-excel"></i> Excel</button>
+                        <button class="btn btn-danger" id="btn-export-siswa-pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                        <button class="btn" id="btn-download-template-siswa" style="background-color: #78909C; color: white;"><i class="fas fa-download"></i> Template</button>
+                    </div>
+                    <div class="table-container"> <table class="styled-table"> <thead> <tr> <th>Nama Siswa</th> <th>NISN</th><th>JK</th> <th>Kelas</th> <th>Status</th> <th class="no-export">Aksi</th> </tr> </thead> <tbody id="siswa-table-body"></tbody> </table> </div>
+                    <div id="no-siswa-data" class="card" style="text-align: center; display: none;">Belum ada data Siswa Aktif.</div>
+                    <input type="file" id="import-siswa-input" class="hidden-file-input" accept=".xlsx, .xls">
+                </div>
+                <div id="tab-spmb" class="tab-content">
+                    <h3 class="card-title"><i class="fas fa-user-plus"></i> Seleksi Penerimaan Murid Baru</h3>
+                    <div class="card">
+                        <div class="action-bar">
+                            <button class="btn btn-primary" id="btn-add-calon-siswa"><i class="fas fa-user-plus"></i> Tambah Calon Siswa</button>
+                        </div>
+                        <div class="table-container">
+                            <table class="styled-table">
+                                <thead> <tr> <th>Nama Calon Siswa</th> <th>Asal Sekolah</th> <th>Status</th> <th class="no-export">Aksi</th> </tr> </thead>
+                                <tbody id="spmb-table-body"></tbody>
+                            </table>
+                        </div>
+                        <div id="no-spmb-data" class="card" style="text-align: center; display: block;">Belum ada data calon siswa.</div>
+                    </div>
+                </div>
+                <div id="tab-daftar-ulang" class="tab-content">
+                    <h3 class="card-title"><i class="fas fa-clipboard-check"></i> Daftar Ulang Siswa</h3>
+                    <div class="card">
+                        <div class="action-bar">
+                            <select id="filter-daftar-ulang-tahun" class="form-control" style="flex-grow: 1;">
+                                <option value="2024/2025">Tahun Ajaran 2024/2025</option>
+                            </select>
+                            <button class="btn btn-primary" id="btn-proses-daftar-ulang"><i class="fas fa-check"></i> Proses Daftar Ulang Terpilih</button>
+                        </div>
+                        <div class="table-container">
+                            <table class="styled-table">
+                                <thead> <tr> <th><input type="checkbox" id="select-all-daftar-ulang"></th> <th>Nama Siswa</th> <th>Kelas Saat Ini</th> <th>Status Daftar Ulang</th> </tr> </thead>
+                                <tbody id="daftar-ulang-table-body"></tbody>
+                            </table>
+                        </div>
+                        <div id="no-daftar-ulang-data" class="card" style="text-align: center; display: block;">Tidak ada siswa yang perlu daftar ulang.</div>
+                    </div>
+                </div>
+                <div id="tab-siswa-mutasi" class="tab-content">
+                    <!-- Konten Siswa Mutasi yang ada -->
+                    <div class="action-bar"> <input type="text" id="search-mutasi" class="form-control" placeholder="Cari nama siswa..."> </div>
+                    <div class="action-bar">
+                        <button class="btn btn-primary" id="btn-add-mutasi"><i class="fas fa-plus"></i> Tambah</button>
+                        <button class="btn btn-success" id="btn-export-mutasi-excel"><i class="fas fa-file-excel"></i> Excel</button>
+                        <button class="btn btn-danger" id="btn-export-mutasi-pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                    </div>
+                    <div class="table-container"> <table class="styled-table"> <thead> <tr> <th>Nama Siswa</th> <th>Jenis Mutasi</th> <th>Tanggal</th> <th>Keterangan</th> <th class="no-export">Aksi</th> </tr> </thead> <tbody id="mutasi-table-body"></tbody> </table> </div>
+                    <div id="no-mutasi-data" class="card" style="text-align: center; display: none;">Belum ada data Siswa Mutasi.</div>
+                </div>
+                <div id="tab-alumni" class="tab-content">
+                    <!-- Konten Alumni yang ada -->
+                    <div class="action-bar"> <input type="text" id="search-alumni" class="form-control" placeholder="Cari nama alumni..."> </div>
+                    <div class="action-bar">
+                        <button class="btn btn-primary" id="btn-add-alumni"><i class="fas fa-plus"></i> Tambah</button>
+                        <button class="btn btn-info" id="btn-import-alumni"><i class="fas fa-file-excel"></i> Impor</button>
+                        <button class="btn btn-success" id="btn-export-alumni-excel"><i class="fas fa-file-excel"></i> Excel</button>
+                        <button class="btn btn-danger" id="btn-export-alumni-pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                        <button class="btn" id="btn-download-template-alumni" style="background-color: #78909C; color: white;"><i class="fas fa-download"></i> Template</button>
+                    </div>
+                    <div class="table-container"> <table class="styled-table"> <thead> <tr> <th>Nama Alumni</th> <th>Tahun Lulus</th> <th>Kontak</th> <th class="no-export">Aksi</th> </tr> </thead> <tbody id="alumni-table-body"></tbody> </table> </div>
+                    <div id="no-alumni-data" class="card" style="text-align: center; display: none;">Belum ada data Alumni.</div>
+                    <input type="file" id="import-alumni-input" class="hidden-file-input" accept=".xlsx, .xls">
+                </div>
+            </section>
+
+            <!-- Page: Data PTK -->
+            <section id="page-ptk" class="page">
+                 <!-- Konten PTK yang ada -->
+                 <div class="action-bar"> <input type="text" id="search-ptk" class="form-control" placeholder="Cari nama atau NUPTK..." style="flex-grow: 2;"> <select id="filter-ptk-jabatan" class="form-control" style="flex-grow: 1;"> <option value="">Semua Jabatan</option> </select> </div>
+                <div class="action-bar">
+                    <button class="btn btn-primary" id="btn-add-ptk"><i class="fas fa-plus"></i> Tambah</button>
+                    <button class="btn btn-info" id="btn-import-ptk"><i class="fas fa-file-excel"></i> Impor</button>
+                    <button class="btn btn-success" id="btn-export-ptk-excel"><i class="fas fa-file-excel"></i> Excel</button>
+                    <button class="btn btn-danger" id="btn-export-ptk-pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                    <button class="btn" id="btn-download-template-ptk" style="background-color: #78909C; color: white;"><i class="fas fa-download"></i> Template</button>
+                </div>
+                <div class="table-container"> <table class="styled-table"> <thead> <tr> <th>Nama PTK</th> <th>NUPTK</th> <th>Jabatan</th> <th>Kontak</th> <th class="no-export">Aksi</th> </tr> </thead> <tbody id="ptk-table-body"></tbody> </table> </div>
+                <div id="no-ptk-data" class="card" style="text-align: center; display: none;">Belum ada data PTK.</div>
+                <input type="file" id="import-ptk-input" class="hidden-file-input" accept=".xlsx, .xls">
+            </section>
+
+            <!-- Page: Data Rapor (Diperbarui) -->
+            <section id="page-rapor" class="page">
+                <nav class="tab-nav">
+                    <a class="tab-link active" data-tab="input-nilai">Input Nilai Akademik</a>
+                    <a class="tab-link" data-tab="daftar-nilai">Daftar Nilai</a>
+                    <a class="tab-link" data-tab="cetak-rapor">Cetak Rapor</a>
+                    <a class="tab-link" data-tab="identitas-rapor">Identitas Rapor</a>
+                    <a class="tab-link" data-tab="skl">SKL</a>
+                </nav>
+                <div id="tab-input-nilai" class="tab-content active">
+                    <h3 class="card-title"><i class="fas fa-keyboard"></i> Input Nilai Akademik</h3>
+                    <div class="card">
+                        <div class="action-bar">
+                             <select id="filter-input-nilai-kelas" class="form-control" style="flex-grow: 1;">
+                                <option value="">Pilih Kelas</option>
+                            </select>
+                            <select id="filter-input-nilai-mapel" class="form-control" style="flex-grow: 2;">
+                                <option value="">Pilih Mata Pelajaran</option>
+                            </select>
+                            <select id="filter-input-nilai-jenis" class="form-control" style="flex-grow: 1;">
+                                <option value="">Pilih Jenis Nilai</option>
+                                <option value="Tugas">Tugas</option>
+                                <option value="Ulangan Harian">Ulangan Harian</option>
+                                <option value="PTS">PTS</option>
+                                <option value="PAS">PAS</option>
+                                <option value="Ujian Sekolah">Ujian Sekolah</option>
+                            </select>
+                        </div>
+                        <div class="table-container">
+                            <table class="styled-table">
+                                <thead> <tr> <th>Nama Siswa</th> <th>NISN</th> <th style="width: 150px;">Nilai</th> </tr> </thead>
+                                <tbody id="input-nilai-table-body"></tbody>
+                            </table>
+                        </div>
+                        <div id="no-siswa-nilai-data" class="card" style="text-align: center; display: none; margin-top: 1rem;">Pilih kelas, mata pelajaran, dan jenis nilai untuk memulai.</div>
+                        <div class="action-bar" style="margin-top: 1.5rem; justify-content: flex-end;">
+                            <button class="btn btn-primary" id="btn-save-nilai"><i class="fas fa-save"></i> Simpan Nilai</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-daftar-nilai" class="tab-content">
+                    <h3 class="card-title"><i class="fas fa-list-ol"></i> Daftar Nilai Siswa</h3>
+                    <div class="card">
+                        <div class="action-bar">
+                            <input type="text" id="search-daftar-nilai" class="form-control" placeholder="Cari nama siswa...">
+                        </div>
+                        <div class="table-container">
+                            <table class="styled-table">
+                                <thead> <tr> <th>Nama Siswa</th> <th>Kelas</th> <th>Mata Pelajaran</th> <th>Jenis Ujian</th> <th>Nilai</th> <th class="no-export">Aksi</th> </tr> </thead>
+                                <tbody id="daftar-nilai-table-body"></tbody>
+                            </table>
+                        </div>
+                        <div id="no-daftar-nilai-data" class="card" style="text-align: center; display: none;">Belum ada data nilai yang tersimpan.</div>
+                    </div>
+                </div>
+                <div id="tab-cetak-rapor" class="tab-content">
+                    <h3 class="card-title"><i class="fas fa-print"></i> Cetak Rapor Semester</h3>
+                     <div class="card">
+                        <div class="action-bar">
+                            <select id="filter-rapor-kelas" class="form-control" style="flex-grow: 1;">
+                                <option value="">Pilih Kelas</option>
+                            </select>
+                            <select id="filter-rapor-siswa" class="form-control" style="flex-grow: 2;">
+                                <option value="">Pilih Siswa</option>
+                            </select>
+                             <select id="filter-rapor-jenis" class="form-control" style="flex-grow: 1;">
+                                <option value="PTS">Rapor PTS</option>
+                                <option value="PAS">Rapor PAS/PAT</option>
+                            </select>
+                            <button class="btn btn-primary" id="btn-cetak-rapor"><i class="fas fa-print"></i> Cetak Rapor</button>
+                        </div>
+                        <div id="rapor-preview-container" class="card" style="margin-top: 1.5rem;">
+                            <!-- Pratinjau rapor akan ditampilkan di sini oleh JS -->
+                            <div id="rapor-preview-content">
+                                <p class="text-secondary" style="text-align: center;">Pilih kelas dan siswa untuk melihat pratinjau rapor.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-identitas-rapor" class="tab-content">
+                    <h3 class="card-title"><i class="fas fa-address-card"></i> Pengaturan Identitas Rapor</h3>
+                    <div class="card">
+                        <form id="form-identitas-rapor">
+                            <div class="form-group"> <label for="rapor-kepala-sekolah">Nama Kepala Sekolah</label> <input type="text" id="rapor-kepala-sekolah" class="form-control" required> </div>
+                            <div class="form-group"> <label for="rapor-nip-kepsek">NIP Kepala Sekolah</label> <input type="text" id="rapor-nip-kepsek" class="form-control"> </div>
+                            <div class="form-group"> <label for="rapor-tanggal-terbit">Tanggal Penerbitan Rapor</label> <input type="date" id="rapor-tanggal-terbit" class="form-control" required> </div>
+                            <div class="form-group"> <label for="rapor-tempat-terbit">Tempat Penerbitan Rapor</label> <input type="text" id="rapor-tempat-terbit" class="form-control" required placeholder="Contoh: Jakarta"> </div>
+                            <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-save"></i> Simpan Identitas</button>
+                        </form>
+                    </div>
+                </div>
+                <div id="tab-skl" class="tab-content">
+                    <h3 class="card-title"><i class="fas fa-graduation-cap"></i> Cetak Surat Keterangan Lulus</h3>
+                    <div class="card">
+                        <div class="action-bar">
+                            <select id="filter-skl-siswa" class="form-control" style="flex-grow: 2;">
+                                <option value="">Pilih Siswa Lulus</option>
+                                <!-- Opsi siswa lulus akan diisi oleh JS -->
+                            </select>
+                            <button class="btn btn-primary" id="btn-cetak-skl"><i class="fas fa-print"></i> Cetak SKL</button>
+                        </div>
+                        <div id="skl-preview-container">
+                            <p class="text-secondary" style="text-align: center;">Pilih siswa untuk melihat pratinjau SKL.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Page: Jadwal Pelajaran (BARU) -->
+            <section id="page-jadwal" class="page">
+                <h2 class="card-title" style="padding: 1.5rem; margin:0;"><i class="fas fa-calendar-alt"></i> Jadwal Pelajaran</h2>
+                <div class="card">
+                    <div class="action-bar">
+                        <select id="filter-jadwal-kelas" class="form-control" style="flex-grow: 1;">
+                            <option value="">Pilih Kelas</option>
+                        </select>
+                        <select id="filter-jadwal-hari" class="form-control" style="flex-grow: 1;">
+                            <option value="">Semua Hari</option>
+                            <option>Senin</option>
+                            <option>Selasa</option>
+                            <option>Rabu</option>
+                            <option>Kamis</option>
+                            <option>Jumat</option>
+                            <option>Sabtu</option>
+                        </select>
+                         <button class="btn btn-primary" id="btn-add-jadwal"><i class="fas fa-plus"></i> Tambah Jadwal</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="styled-table">
+                            <thead> <tr> <th>Hari</th> <th>Jam Ke-</th> <th>Waktu</th> <th>Mata Pelajaran</th> <th>Guru Pengajar</th> <th class="no-export">Aksi</th> </tr> </thead>
+                            <tbody id="jadwal-table-body"></tbody>
+                        </table>
+                    </div>
+                    <div id="no-jadwal-data" class="card" style="text-align: center; display: none; margin-top: 1rem;">Belum ada data jadwal untuk kelas ini.</div>
+                </div>
+            </section>
+
+            <!-- Page: Sarpras -->
+            <section id="page-sarpras" class="page">
+                <nav class="tab-nav">
+                    <a class="tab-link active" data-tab="inventaris">Inventaris Barang</a>
+                    <a class="tab-link" data-tab="stok-harian">Operasional Harian</a>
+                </nav>
+                <div id="tab-inventaris" class="tab-content active">
+                    <div class="action-bar">
+                        <input type="text" id="search-inventaris" class="form-control" placeholder="Cari nama barang..." style="flex-grow: 2;">
+                        <select id="filter-inventaris-lokasi" class="form-control" style="flex-grow: 1;"> <option value="">Semua Lokasi</option> </select>
+                        <select id="filter-inventaris-kondisi" class="form-control" style="flex-grow: 1;"> <option value="">Semua Kondisi</option> <option>Baik</option> <option>Rusak Ringan</option> <option>Rusak Berat</option> </select>
+                    </div>
+                    <div class="action-bar">
+                        <button class="btn btn-primary" id="btn-add-inventaris"><i class="fas fa-plus"></i> Tambah</button>
+                        <button class="btn btn-success" id="btn-export-inventaris-excel"><i class="fas fa-file-excel"></i> Excel</button>
+                        <button class="btn btn-danger" id="btn-export-inventaris-pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                    </div>
+                    <div class="table-container"> 
+                        <table class="styled-table"> 
+                            <thead> <tr> <th>Kode</th> <th>Nama Barang</th> <th>Jumlah</th><th>Harga (Rp)</th> <th>Lokasi</th> <th>Kondisi</th> <th>Tgl Pembelian</th> <th class="no-export">Aksi</th> </tr> </thead> 
+                            <tbody id="inventaris-table-body"></tbody> 
+                        </table> 
+                    </div>
+                    <div id="no-inventaris-data" class="card" style="text-align: center; display: none;">Belum ada data inventaris.</div>
+                </div>
+                <div id="tab-stok-harian" class="tab-content">
+                    <h3 class="card-title"><i class="fas fa-box-open"></i> Stok Operasional Harian</h3>
+                     <div class="action-bar">
+                        <button class="btn btn-primary" id="btn-add-stok"><i class="fas fa-plus"></i> Tambah Barang</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="styled-table">
+                            <thead> <tr> <th>Nama Barang</th> <th>Jumlah Stok</th> <th class="no-export">Aksi</th> </tr> </thead>
+                            <tbody id="stok-harian-table-body"></tbody>
+                        </table>
+                    </div>
+                     <div id="no-stok-data" class="card" style="text-align: center; display: none;">Belum ada data stok barang harian.</div>
+                </div>
+            </section>
+            
+            <!-- Page: Keuangan -->
+            <section id="page-keuangan" class="page">
+                <nav class="tab-nav">
+                    <a class="tab-link active" data-tab="spp">SPP</a>
+                    <a class="tab-link" data-tab="infaq">Infaq</a>
+                    <a class="tab-link" data-tab="gaji-guru">Gaji Guru</a>
+                    <a class="tab-link" data-tab="pengeluaran">Pengeluaran</a>
+                </nav>
+                <div id="tab-spp" class="tab-content active">
+                    <h3 class="card-title"><i class="fas fa-receipt"></i> Pembayaran SPP Siswa</h3>
+                    <div class="action-bar"> <input type="text" id="search-spp" class="form-control" placeholder="Cari nama siswa atau jenis pembayaran..."> </div>
+                    <div class="action-bar">
+                        <button class="btn btn-primary" id="btn-add-spp"><i class="fas fa-plus"></i> Tambah</button>
+                        <button class="btn btn-success" id="btn-export-spp-excel"><i class="fas fa-file-excel"></i> Excel</button>
+                        <button class="btn btn-danger" id="btn-export-spp-pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                    </div>
+                    <div class="table-container"> <table class="styled-table"> <thead> <tr> <th>Nama Siswa</th> <th>Keterangan</th> <th>Jumlah</th> <th>Tanggal</th> <th class="no-export">Bukti</th> <th class="no-export">Aksi</th> </tr> </thead> <tbody id="spp-table-body"></tbody> </table> </div>
+                    <div id="no-spp-data" class="card" style="text-align: center; display: none;">Belum ada data pembayaran SPP.</div>
+                </div>
+                 <div id="tab-infaq" class="tab-content">
+                    <h3 class="card-title"><i class="fas fa-hand-holding-heart"></i> Pemasukan Infaq</h3>
+                    <div class="action-bar"> <input type="text" id="search-infaq" class="form-control" placeholder="Cari sumber atau keterangan..."> </div>
+                    <div class="action-bar">
+                        <button class="btn btn-primary" id="btn-add-infaq"><i class="fas fa-plus"></i> Tambah</button>
+                        <button class="btn btn-success" id="btn-export-infaq-excel"><i class="fas fa-file-excel"></i> Excel</button>
+                        <button class="btn btn-danger" id="btn-export-infaq-pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                    </div>
+                    <div class="table-container"> <table class="styled-table"> <thead> <tr> <th>Sumber Infaq</th> <th>Keterangan</th> <th>Jumlah</th> <th>Tanggal</th> <th class="no-export">Bukti</th> <th class="no-export">Aksi</th> </tr> </thead> <tbody id="infaq-table-body"></tbody> </table> </div>
+                    <div id="no-infaq-data" class="card" style="text-align: center; display: none;">Belum ada data Infaq.</div>
+                </div>
+                <div id="tab-gaji-guru" class="tab-content">
+                    <h3 class="card-title"><i class="fas fa-money-check-alt"></i> Pembayaran Gaji Guru</h3>
+                    <nav class="tab-nav-inner">
+                        <a class="tab-link-inner active" data-subtab="gaji-pokok">Gaji Pokok</a>
+                        <a class="tab-link-inner" data-subtab="gaji-infal">Gaji Infal</a>
+                        <a class="tab-link-inner" data-subtab="gaji-catatan">Catatan</a>
+                    </nav>
+                    <div id="subtab-gaji-pokok" class="subtab-content active">
+                        <div class="action-bar"> <input type="text" id="search-pembayaran-guru" class="form-control" placeholder="Cari nama guru atau jenis pembayaran..."> </div>
+                        <div class="action-bar">
+                            <button class="btn btn-primary" id="btn-add-pembayaran-guru"><i class="fas fa-plus"></i> Tambah</button>
+                            <button class="btn btn-success" id="btn-export-pembayaran-guru-excel"><i class="fas fa-file-excel"></i> Excel</button>
+                            <button class="btn btn-danger" id="btn-export-pembayaran-guru-pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                        </div>
+                        <div class="table-container"> <table class="styled-table"> <thead> <tr> <th>Nama Guru</th> <th>Jenis Pembayaran</th> <th>Jumlah</th> <th>Tanggal</th> <th class="no-export">Aksi</th> </tr> </thead> <tbody id="pembayaran-guru-table-body"></tbody> </table> </div>
+                        <div id="no-pembayaran-guru-data" class="card" style="text-align: center; display: none;">Belum ada data pembayaran gaji.</div>
+                    </div>
+                    <div id="subtab-gaji-infal" class="subtab-content">
+                         <div class="card">
+                            <h3 class="card-title"><i class="fas fa-user-clock"></i> Pembayaran Gaji Infal</h3>
+                            <div class="action-bar"><button class="btn btn-primary" id="btn-add-gaji-infal"><i class="fas fa-plus"></i> Tambah</button></div>
+                            <div class="table-container"><table class="styled-table"><thead><tr><th>Nama Guru</th><th>Jumlah Hari</th><th>Total Bayar</th><th>Tanggal</th><th class="no-export">Aksi</th></tr></thead><tbody id="gaji-infal-table-body"></tbody></table></div>
+                            <div id="no-gaji-infal-data" class="card" style="text-align: center; display: block;">Belum ada data gaji infal.</div>
+                         </div>
+                    </div>
+                    <div id="subtab-gaji-catatan" class="subtab-content">
+                         <div class="card">
+                            <h3 class="card-title"><i class="fas fa-book-open"></i> Catatan Gaji</h3>
+                            <div class="action-bar"><button class="btn btn-primary" id="btn-add-catatan-gaji"><i class="fas fa-plus"></i> Tambah Catatan</button></div>
+                            <div class="table-container"><table class="styled-table"><thead><tr><th>Tanggal</th><th>Judul Catatan</th><th class="no-export">Aksi</th></tr></thead><tbody id="gaji-catatan-table-body"></tbody></table></div>
+                            <div id="no-gaji-catatan-data" class="card" style="text-align: center; display: block;">Belum ada catatan gaji.</div>
+                         </div>
+                    </div>
+                </div>
+                <div id="tab-pengeluaran" class="tab-content">
+                    <h3 class="card-title"><i class="fas fa-shopping-cart"></i> Pengeluaran Sekolah</h3>
+                    <div class="action-bar"> <input type="text" id="search-pengeluaran" class="form-control" placeholder="Cari keterangan pengeluaran..."> </div>
+                    <div class="action-bar">
+                        <button class="btn btn-primary" id="btn-add-pengeluaran"><i class="fas fa-plus"></i> Tambah</button>
+                        <button class="btn btn-success" id="btn-export-pengeluaran-excel"><i class="fas fa-file-excel"></i> Excel</button>
+                        <button class="btn btn-danger" id="btn-export-pengeluaran-pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                    </div>
+                    <div class="table-container"> <table class="styled-table"> <thead> <tr> <th>Keterangan</th> <th>Jumlah</th> <th>Tanggal</th> <th>Kategori</th> <th class="no-export">Bukti</th> <th class="no-export">Aksi</th> </tr> </thead> <tbody id="pengeluaran-table-body"></tbody> </table> </div>
+                    <div id="no-pengeluaran-data" class="card" style="text-align: center; display: none;">Belum ada data pengeluaran.</div>
+                </div>
+            </section>
+
+            <!-- Page: Surat Menyurat -->
+            <section id="page-surat" class="page">
+                <!-- Konten Surat Menyurat yang ada -->
+                <nav class="tab-nav">
+                    <a class="tab-link active" data-tab="surat-masuk">Surat Masuk</a>
+                    <a class="tab-link" data-tab="surat-keluar">Surat Keluar</a>
+                </nav>
+                <div id="tab-surat-masuk" class="tab-content active">
+                    <div class="action-bar"> <input type="text" id="search-surat-masuk" class="form-control" placeholder="Cari perihal atau asal surat..."> </div>
+                    <div class="action-bar">
+                        <button class="btn btn-primary" id="btn-add-surat-masuk"><i class="fas fa-plus"></i> Tambah</button>
+                        <button class="btn btn-success" id="btn-export-surat-masuk-excel"><i class="fas fa-file-excel"></i> Excel</button>
+                        <button class="btn btn-danger" id="btn-export-surat-masuk-pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                    </div>
+                    <div class="table-container"> <table class="styled-table"> <thead> <tr> <th>No. Surat</th> <th>Tanggal</th> <th>Asal</th> <th>Perihal</th> <th class="no-export">Aksi</th> </tr> </thead> <tbody id="surat-masuk-table-body"></tbody> </table> </div>
+                    <div id="no-surat-masuk-data" class="card" style="text-align: center; display: none;">Belum ada data Surat Masuk.</div>
+                </div>
+                 <div id="tab-surat-keluar" class="tab-content">
+                    <div class="action-bar"> <input type="text" id="search-surat-keluar" class="form-control" placeholder="Cari perihal atau tujuan surat..."> </div>
+                    <div class="action-bar">
+                        <button class="btn btn-primary" id="btn-add-surat-keluar"><i class="fas fa-plus"></i> Tambah</button>
+                        <button class="btn btn-success" id="btn-export-surat-keluar-excel"><i class="fas fa-file-excel"></i> Excel</button>
+                        <button class="btn btn-danger" id="btn-export-surat-keluar-pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                    </div>
+                    <div class="table-container"> <table class="styled-table"> <thead> <tr> <th>No. Surat</th> <th>Tanggal</th> <th>Tujuan</th> <th>Perihal</th> <th class="no-export">Aksi</th> </tr> </thead> <tbody id="surat-keluar-table-body"></tbody> </table> </div>
+                    <div id="no-surat-keluar-data" class="card" style="text-align: center; display: none;">Belum ada data Surat Keluar.</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Generic Modal for Forms and Confirmations -->
+    <div id="form-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"> <h2 id="modal-title">Form</h2> <span class="close-button">&times;</span> </div>
+            <div id="modal-body"></div>
+            <div id="modal-footer" class="modal-footer" style="display: none;"></div>
+        </div>
+    </div>
+    
+    <!-- Image Viewer Modal -->
+    <div id="image-viewer-modal" class="modal">
+        <div class="modal-content" style="max-width: 80vw; max-height: 80vh; padding: 10px;">
+             <div class="modal-header"> <h2 id="image-viewer-title">Bukti Pembayaran</h2> <span class="close-button">&times;</span> </div>
+             <div id="image-viewer-body" style="text-align: center; padding: 1rem 0;">
+                <img id="image-viewer-src" src="" alt="Gambar Bukti" style="max-width: 100%; max-height: 60vh; border-radius: 10px;">
+             </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast">Pesan notifikasi</div>
+    
+    <!-- Theme Toggle Switch (Template) -->
+    <template id="theme-switch-template">
+        <div class="theme-switch-wrapper">
+            <i class="fas fa-sun"></i>
+            <label class="theme-switch">
+                <input type="checkbox" class="theme-toggle-input">
+                <span class="slider round"></span>
+            </label>
+            <i class="fas fa-moon"></i>
+        </div>
+    </template>
+
+    <!-- Main Application Script -->
+    <script src="app.js" defer></script>
+    <script>
+    // URL redirect target
+        const redirectUrl = "https://lynk.id/muslimtechpreneur";
+
+        // 1. Disable klik kanan dan drag image
+        document.addEventListener("contextmenu", e => e.preventDefault());
+        document.addEventListener("dragstart", e => e.preventDefault());
+        document.addEventListener("mousedown", e => {
+          if (e.button === 2 || e.button === 1) e.preventDefault();
+        });
+
+        // 2. Disable shortcut keyboard untuk Inspect & Save Source
+        document.addEventListener("keydown", function(e) {
+          if (
+            e.key === "F12" ||
+            (e.ctrlKey && e.shiftKey && ["I", "J", "C", "K"].includes(e.key.toUpperCase())) ||
+            (e.ctrlKey && ["U", "S"].includes(e.key.toUpperCase()))
+          ) {
+            e.preventDefault();
+            window.location.href = redirectUrl;
+          }
+        });
+
+        // 3. Deteksi DevTools via console.log trick
+        (function detectConsoleOpen() {
+          const element = new Image();
+          Object.defineProperty(element, "id", {
+            get: function () {
+              window.location.replace(redirectUrl);
+            }
+          });
+          setInterval(() => {
+            console.log(element);
+          }, 1000);
+        })();
+
+        // 4. (Opsional) Cegah download gambar via klik kanan Save As
+        document.addEventListener("DOMContentLoaded", () => {
+          document.querySelectorAll("img").forEach(img => {
+            img.setAttribute("draggable", "false");
+            img.oncontextmenu = e => e.preventDefault();
+          });
+        });
+
+// Daftarkan service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js')
+    .then(reg => console.log('SW berhasil:', reg))
+    .catch(err => console.error('SW gagal:', err));
+}</script>
+</body>
+</html>
